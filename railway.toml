@@ -1,0 +1,14 @@
+version: "3"
+services:
+  saludia:
+    source:
+      repo: https://github.com/tu-usuario/saludia
+    build:
+      builder: NIXPACKS
+    deploy:
+      startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+      healthcheckPath: /health
+    variables:
+      - ANTHROPIC_API_KEY
+      - SUPABASE_URL
+      - SUPABASE_KEY

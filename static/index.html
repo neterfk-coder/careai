@@ -1,0 +1,791 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CareAI — AI-Powered Medical Triage for Rural Communities</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      :root {
+        --primary: #1a7f5a;
+        --primary-light: #e8f5f0;
+        --primary-dark: #0f5940;
+        --alta: #dc2626;
+        --alta-bg: #fef2f2;
+        --media: #d97706;
+        --media-bg: #fffbeb;
+        --baja: #16a34a;
+        --baja-bg: #f0fdf4;
+        --gray-50: #f9fafb;
+        --gray-100: #f3f4f6;
+        --gray-200: #e5e7eb;
+        --gray-400: #9ca3af;
+        --gray-600: #4b5563;
+        --gray-800: #1f2937;
+        --radius: 12px;
+        --radius-sm: 8px;
+      }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: var(--gray-50);
+        color: var(--gray-800);
+        min-height: 100vh;
+      }
+      header {
+        background: white;
+        border-bottom: 1px solid var(--gray-200);
+        padding: 0 1.5rem;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+      .header-inner {
+        max-width: 720px;
+        margin: 0 auto;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .logo-icon {
+        width: 36px;
+        height: 36px;
+        background: var(--primary);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .logo-icon svg {
+        width: 20px;
+        height: 20px;
+        fill: white;
+      }
+      .logo-text {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--primary-dark);
+      }
+      .logo-text span {
+        color: var(--primary);
+      }
+      .header-right {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .badge-header {
+        font-size: 11px;
+        background: var(--primary-light);
+        color: var(--primary-dark);
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-weight: 500;
+      }
+      .user-email {
+        font-size: 12px;
+        color: var(--gray-400);
+        max-width: 160px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .logout-btn {
+        font-size: 13px;
+        padding: 6px 14px;
+        border: 1px solid var(--gray-200);
+        border-radius: 20px;
+        background: white;
+        color: var(--gray-600);
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .logout-btn:hover {
+        border-color: var(--alta);
+        color: var(--alta);
+      }
+      main {
+        max-width: 720px;
+        margin: 0 auto;
+        padding: 2rem 1.5rem;
+      }
+      .hero {
+        text-align: center;
+        margin-bottom: 2.5rem;
+      }
+      .hero h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--gray-800);
+        margin-bottom: 0.5rem;
+        line-height: 1.2;
+      }
+      .hero h1 span {
+        color: var(--primary);
+      }
+      .hero p {
+        font-size: 1rem;
+        color: var(--gray-600);
+        max-width: 480px;
+        margin: 0 auto;
+        line-height: 1.6;
+      }
+      .card {
+        background: white;
+        border-radius: var(--radius);
+        border: 1px solid var(--gray-200);
+        padding: 1.5rem;
+        margin-bottom: 1.25rem;
+      }
+      .card-title {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--gray-600);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      textarea {
+        width: 100%;
+        border: 1.5px solid var(--gray-200);
+        border-radius: var(--radius-sm);
+        padding: 0.875rem 1rem;
+        font-size: 15px;
+        font-family: inherit;
+        resize: none;
+        outline: none;
+        transition: border-color 0.2s;
+        color: var(--gray-800);
+        line-height: 1.6;
+      }
+      textarea:focus {
+        border-color: var(--primary);
+      }
+      textarea::placeholder {
+        color: var(--gray-400);
+      }
+      .location-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 0.75rem;
+      }
+      .location-btn {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 14px;
+        border-radius: 20px;
+        border: 1px solid var(--gray-200);
+        background: white;
+        font-size: 13px;
+        color: var(--gray-600);
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .location-btn:hover {
+        border-color: var(--primary);
+        color: var(--primary);
+      }
+      .location-status {
+        font-size: 12px;
+        color: var(--gray-400);
+      }
+      .location-status.ok {
+        color: var(--baja);
+      }
+      .submit-btn {
+        width: 100%;
+        padding: 0.875rem;
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: var(--radius-sm);
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        margin-top: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+      .submit-btn:hover {
+        background: var(--primary-dark);
+      }
+      .submit-btn:disabled {
+        background: var(--gray-400);
+        cursor: not-allowed;
+      }
+      .spinner {
+        width: 18px;
+        height: 18px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-top-color: white;
+        border-radius: 50%;
+        animation: spin 0.7s linear infinite;
+        display: none;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      .results {
+        display: none;
+      }
+      .urgency-banner {
+        border-radius: var(--radius);
+        padding: 1.25rem 1.5rem;
+        margin-bottom: 1.25rem;
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+      .urgency-banner.ALTA {
+        background: var(--alta-bg);
+        border: 1.5px solid var(--alta);
+      }
+      .urgency-banner.MEDIA {
+        background: var(--media-bg);
+        border: 1.5px solid var(--media);
+      }
+      .urgency-banner.BAJA {
+        background: var(--baja-bg);
+        border: 1.5px solid var(--baja);
+      }
+      .urgency-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        font-size: 22px;
+      }
+      .urgency-banner.ALTA .urgency-icon {
+        background: var(--alta);
+      }
+      .urgency-banner.MEDIA .urgency-icon {
+        background: var(--media);
+      }
+      .urgency-banner.BAJA .urgency-icon {
+        background: var(--baja);
+      }
+      .urgency-label {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin-bottom: 2px;
+      }
+      .ALTA .urgency-label {
+        color: var(--alta);
+      }
+      .MEDIA .urgency-label {
+        color: var(--media);
+      }
+      .BAJA .urgency-label {
+        color: var(--baja);
+      }
+      .urgency-title {
+        font-size: 17px;
+        font-weight: 700;
+        color: var(--gray-800);
+        margin-bottom: 4px;
+      }
+      .urgency-desc {
+        font-size: 14px;
+        color: var(--gray-600);
+        line-height: 1.5;
+      }
+      .info-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-bottom: 1.25rem;
+      }
+      @media (max-width: 500px) {
+        .info-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .info-card {
+        background: var(--gray-50);
+        border-radius: var(--radius-sm);
+        padding: 1rem;
+        border: 1px solid var(--gray-100);
+      }
+      .info-card-label {
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--gray-400);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 4px;
+      }
+      .info-card-value {
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--gray-800);
+      }
+      .steps-list {
+        list-style: none;
+      }
+      .steps-list li {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+        padding: 8px 0;
+        border-bottom: 1px solid var(--gray-100);
+        font-size: 14px;
+        color: var(--gray-700);
+        line-height: 1.5;
+      }
+      .steps-list li:last-child {
+        border-bottom: none;
+      }
+      .step-num {
+        min-width: 22px;
+        height: 22px;
+        background: var(--primary-light);
+        color: var(--primary-dark);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: 700;
+        margin-top: 1px;
+      }
+      .alarm-list {
+        list-style: none;
+      }
+      .alarm-list li {
+        display: flex;
+        gap: 8px;
+        align-items: flex-start;
+        padding: 6px 0;
+        font-size: 13px;
+        color: var(--alta);
+        line-height: 1.4;
+      }
+      .alarm-list li::before {
+        content: "⚠";
+        font-size: 14px;
+        flex-shrink: 0;
+      }
+      .center-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 0.875rem 0;
+        border-bottom: 1px solid var(--gray-100);
+      }
+      .center-item:last-child {
+        border-bottom: none;
+      }
+      .center-dot {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        background: var(--primary-light);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+      .center-dot svg {
+        width: 18px;
+        height: 18px;
+        fill: var(--primary);
+      }
+      .center-name {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--gray-800);
+        margin-bottom: 2px;
+      }
+      .center-type {
+        font-size: 12px;
+        color: var(--gray-400);
+        margin-bottom: 3px;
+      }
+      .center-meta {
+        font-size: 12px;
+        color: var(--gray-600);
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .badge-24h {
+        font-size: 10px;
+        background: #dcfce7;
+        color: #166534;
+        padding: 2px 8px;
+        border-radius: 20px;
+        font-weight: 600;
+      }
+      .dist-badge {
+        font-size: 11px;
+        background: var(--primary-light);
+        color: var(--primary-dark);
+        padding: 2px 8px;
+        border-radius: 20px;
+        font-weight: 600;
+        white-space: nowrap;
+      }
+      .no-centers {
+        text-align: center;
+        padding: 1.5rem;
+        color: var(--gray-400);
+        font-size: 14px;
+      }
+      .reset-btn {
+        width: 100%;
+        padding: 0.75rem;
+        background: transparent;
+        color: var(--gray-600);
+        border: 1px solid var(--gray-200);
+        border-radius: var(--radius-sm);
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.2s;
+        margin-top: 0.5rem;
+      }
+      .reset-btn:hover {
+        background: var(--gray-100);
+      }
+      footer {
+        text-align: center;
+        padding: 2rem 1.5rem;
+        color: var(--gray-400);
+        font-size: 12px;
+      }
+      footer a {
+        color: var(--primary);
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="header-inner">
+        <div class="logo">
+          <div class="logo-icon">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"
+              />
+            </svg>
+          </div>
+          <span class="logo-text">Care<span>AI</span></span>
+        </div>
+        <div class="header-right">
+          <span class="badge-header">For Social Good</span>
+          <span class="user-email" id="user-email"></span>
+          <button class="logout-btn" onclick="logout()">Sign out</button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <div class="hero">
+        <h1>AI-Powered <span>Medical Triage</span> for Everyone</h1>
+        <p>
+          Describe your symptoms and instantly receive an urgency assessment,
+          first aid guidance, and the nearest health centers to you.
+        </p>
+      </div>
+
+      <div id="form-section">
+        <div class="card">
+          <div class="card-title">
+            <svg
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              style="width: 16px; height: 16px"
+            >
+              <path
+                d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"
+              />
+            </svg>
+            What symptoms are you experiencing?
+          </div>
+          <textarea
+            id="symptoms"
+            rows="5"
+            placeholder="Example: I've had a high fever since yesterday, severe headache, chills and I feel very tired..."
+            maxlength="800"
+          ></textarea>
+          <div class="location-row">
+            <button class="location-btn" onclick="getLocation()">
+              <svg
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                style="width: 14px; height: 14px"
+              >
+                <path
+                  d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"
+                />
+              </svg>
+              Use my location
+            </button>
+            <span class="location-status" id="location-status"
+              >Optional — improves results</span
+            >
+          </div>
+          <button class="submit-btn" id="submit-btn" onclick="analyze()">
+            <div class="spinner" id="spinner"></div>
+            <span id="btn-text">Analyze symptoms</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="results" id="results">
+        <div class="urgency-banner" id="urgency-banner">
+          <div class="urgency-icon" id="urgency-icon"></div>
+          <div>
+            <div class="urgency-label" id="urgency-label"></div>
+            <div class="urgency-title" id="urgency-titulo"></div>
+            <div class="urgency-desc" id="urgency-desc"></div>
+          </div>
+        </div>
+        <div class="info-grid">
+          <div class="info-card">
+            <div class="info-card-label">Immediate recommendation</div>
+            <div class="info-card-value" id="recomendacion"></div>
+          </div>
+          <div class="info-card">
+            <div class="info-card-label">Recommended specialist</div>
+            <div class="info-card-value" id="especialidad"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">First aid steps</div>
+          <ul class="steps-list" id="primeros-auxilios"></ul>
+        </div>
+        <div class="card" id="alarma-card" style="border-color: #fca5a5">
+          <div class="card-title" style="color: var(--alta)">
+            Warning signs — go to emergency if...
+          </div>
+          <ul class="alarm-list" id="señales-alarma"></ul>
+        </div>
+        <div class="card">
+          <div class="card-title">
+            <svg
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              style="width: 16px; height: 16px"
+            >
+              <path
+                d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"
+              />
+            </svg>
+            Nearby health centers
+          </div>
+          <div id="centers-list"></div>
+        </div>
+        <button class="reset-btn" onclick="reset()">
+          Start a new consultation
+        </button>
+      </div>
+    </main>
+
+    <footer>
+      <p>
+        CareAI does not replace professional medical consultation.<br />
+        In emergencies call <strong>106</strong> (SAMU) or
+        <strong>116</strong> (Fire Department).
+      </p>
+      <p style="margin-top: 6px">
+        Built with ❤ for the Quantum Sprint Hackathon ·
+        <a href="https://quantum-sprint.devpost.com" target="_blank">Devpost</a>
+      </p>
+    </footer>
+
+    <script>
+      // ── SUPABASE AUTH ──
+      const { createClient } = supabase;
+      const sb = createClient(
+        "https://wawqdgavicxbovubwkrl.supabase.co",
+        "sb_publishable_iUwmMypW776Ww7kGRbHgsA_M5pps90N",
+      );
+
+      // Al cargar: si no hay sesión activa → redirige al login
+      sb.auth.getSession().then(({ data }) => {
+        if (!data.session) {
+          window.location.href = "/static/login.html";
+        } else {
+          document.getElementById("user-email").textContent =
+            data.session.user.email;
+        }
+      });
+
+      // Escuchar cambios en tiempo real — si cierra sesión en otra pestaña, redirige
+      sb.auth.onAuthStateChange((event, session) => {
+        if (event === "SIGNED_OUT" || !session) {
+          window.location.href = "/static/login.html";
+        }
+      });
+
+      async function logout() {
+        await sb.auth.signOut();
+      }
+
+      // ── TRIAGE ──
+      let userLat = null;
+      let userLon = null;
+
+      function getLocation() {
+        const status = document.getElementById("location-status");
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            userLat = pos.coords.latitude;
+            userLon = pos.coords.longitude;
+            status.textContent = "✓ Location obtained";
+            status.className = "location-status ok";
+          },
+          () => {
+            status.textContent = "Could not get location";
+          },
+        );
+      }
+
+      async function analyze() {
+        const symptoms = document.getElementById("symptoms").value.trim();
+        if (!symptoms) {
+          alert("Please describe your symptoms before continuing.");
+          return;
+        }
+
+        const btn = document.getElementById("submit-btn");
+        const spinner = document.getElementById("spinner");
+        const btnText = document.getElementById("btn-text");
+        btn.disabled = true;
+        spinner.style.display = "block";
+        btnText.textContent = "Analyzing...";
+
+        try {
+          const body = { symptoms };
+          if (userLat && userLon) {
+            body.latitude = userLat;
+            body.longitude = userLon;
+          }
+
+          const res = await fetch("/api/triage", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body),
+          });
+
+          if (!res.ok) {
+            const err = await res.json();
+            throw new Error(err.detail || "Server error");
+          }
+          renderResults(await res.json());
+        } catch (e) {
+          alert("Error: " + e.message);
+        } finally {
+          btn.disabled = false;
+          spinner.style.display = "none";
+          btnText.textContent = "Analyze symptoms";
+        }
+      }
+
+      function renderResults(data) {
+        const { triage, centers } = data;
+        const urgency = triage.urgencia;
+        const icons = { ALTA: "🚨", MEDIA: "⚠️", BAJA: "✅" };
+        const labels = {
+          ALTA: "High Urgency",
+          MEDIA: "Medium Urgency",
+          BAJA: "Low Urgency",
+        };
+
+        const banner = document.getElementById("urgency-banner");
+        banner.className = `urgency-banner ${urgency}`;
+        document.getElementById("urgency-icon").textContent = icons[urgency];
+        document.getElementById("urgency-label").textContent = labels[urgency];
+        document.getElementById("urgency-titulo").textContent = triage.titulo;
+        document.getElementById("urgency-desc").textContent =
+          triage.descripcion;
+        document.getElementById("recomendacion").textContent =
+          triage.recomendacion;
+        document.getElementById("especialidad").textContent =
+          triage.especialidad;
+
+        document.getElementById("primeros-auxilios").innerHTML = (
+          triage.primeros_auxilios || []
+        )
+          .map(
+            (s, i) =>
+              `<li><div class="step-num">${i + 1}</div><span>${s}</span></li>`,
+          )
+          .join("");
+
+        const alarmas = triage.señales_alarma || [];
+        document.getElementById("señales-alarma").innerHTML = alarmas
+          .map((a) => `<li>${a}</li>`)
+          .join("");
+        document.getElementById("alarma-card").style.display = alarmas.length
+          ? "block"
+          : "none";
+
+        const cl = document.getElementById("centers-list");
+        if (!centers || centers.length === 0) {
+          cl.innerHTML = `<div class="no-centers">No nearby health centers found.<br>Call <strong>106</strong> (SAMU) for guidance.</div>`;
+        } else {
+          cl.innerHTML = centers
+            .map(
+              (c) => `
+        <div class="center-item">
+          <div class="center-dot">
+            <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/></svg>
+          </div>
+          <div style="flex:1">
+            <div class="center-name">${c.name}</div>
+            <div class="center-type">${c.type} · ${c.region || ""}</div>
+            <div class="center-meta">
+              ${c.distance_km != null ? `<span class="dist-badge">${c.distance_km} km away</span>` : ""}
+              ${c.emergency_24h ? `<span class="badge-24h">24h Emergency</span>` : ""}
+              ${c.phone ? `<span>📞 ${c.phone}</span>` : ""}
+            </div>
+            ${c.address ? `<div style="font-size:12px;color:var(--gray-400);margin-top:3px">${c.address}</div>` : ""}
+          </div>
+        </div>`,
+            )
+            .join("");
+        }
+
+        document.getElementById("form-section").style.display = "none";
+        document.getElementById("results").style.display = "block";
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      function reset() {
+        document.getElementById("form-section").style.display = "block";
+        document.getElementById("results").style.display = "none";
+        document.getElementById("symptoms").value = "";
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    </script>
+  </body>
+</html>

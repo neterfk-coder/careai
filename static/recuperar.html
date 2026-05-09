@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CareAI — Reset Password</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      :root {
+        --primary: #1a7f5a;
+        --primary-light: #e8f5f0;
+        --primary-dark: #0f5940;
+        --alta: #dc2626;
+        --alta-bg: #fef2f2;
+        --baja: #16a34a;
+        --baja-bg: #f0fdf4;
+        --gray-50: #f9fafb;
+        --gray-200: #e5e7eb;
+        --gray-400: #9ca3af;
+        --gray-600: #4b5563;
+        --gray-800: #1f2937;
+        --radius: 12px;
+        --radius-sm: 8px;
+      }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: var(--gray-50);
+        color: var(--gray-800);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      header {
+        background: white;
+        border-bottom: 1px solid var(--gray-200);
+        padding: 0 1.5rem;
+      }
+      .header-inner {
+        max-width: 720px;
+        margin: 0 auto;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+      }
+      .logo-icon {
+        width: 36px;
+        height: 36px;
+        background: var(--primary);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .logo-icon svg {
+        width: 20px;
+        height: 20px;
+        fill: white;
+      }
+      .logo-text {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--primary-dark);
+      }
+      .logo-text span {
+        color: var(--primary);
+      }
+      .badge {
+        font-size: 11px;
+        background: var(--primary-light);
+        color: var(--primary-dark);
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-weight: 500;
+      }
+      .wrapper {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1.5rem;
+      }
+      .card {
+        background: white;
+        border: 1px solid var(--gray-200);
+        border-radius: var(--radius);
+        padding: 2rem;
+        width: 100%;
+        max-width: 400px;
+      }
+      .card-logo {
+        text-align: center;
+        margin-bottom: 1.5rem;
+      }
+      .card-logo-icon {
+        width: 52px;
+        height: 52px;
+        background: var(--primary);
+        border-radius: 14px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 10px;
+      }
+      .card-logo-icon svg {
+        width: 28px;
+        height: 28px;
+        fill: white;
+      }
+      .card-logo h1 {
+        font-size: 22px;
+        font-weight: 700;
+        color: var(--primary-dark);
+      }
+      .card-logo h1 span {
+        color: var(--primary);
+      }
+      h2 {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 4px;
+      }
+      .subtitle {
+        font-size: 13px;
+        color: var(--gray-400);
+        margin-bottom: 1.5rem;
+      }
+      .form-group {
+        margin-bottom: 1rem;
+      }
+      label {
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--gray-600);
+        display: block;
+        margin-bottom: 6px;
+      }
+      input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 1.5px solid var(--gray-200);
+        border-radius: var(--radius-sm);
+        font-size: 15px;
+        font-family: inherit;
+        outline: none;
+        transition: border-color 0.2s;
+        color: var(--gray-800);
+      }
+      input:focus {
+        border-color: var(--primary);
+      }
+      input::placeholder {
+        color: var(--gray-400);
+      }
+      .btn {
+        width: 100%;
+        padding: 0.875rem;
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: var(--radius-sm);
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        margin-top: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+      .btn:hover {
+        background: var(--primary-dark);
+      }
+      .btn:disabled {
+        background: var(--gray-400);
+        cursor: not-allowed;
+      }
+      .spinner {
+        width: 18px;
+        height: 18px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-top-color: white;
+        border-radius: 50%;
+        animation: spin 0.7s linear infinite;
+        display: none;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      .error {
+        background: var(--alta-bg);
+        color: var(--alta);
+        border: 1px solid #fca5a5;
+        border-radius: var(--radius-sm);
+        padding: 0.75rem 1rem;
+        font-size: 13px;
+        margin-bottom: 1rem;
+        display: none;
+      }
+      .success {
+        background: var(--baja-bg);
+        color: var(--baja);
+        border: 1px solid #86efac;
+        border-radius: var(--radius-sm);
+        padding: 0.75rem 1rem;
+        font-size: 13px;
+        margin-bottom: 1rem;
+        display: none;
+      }
+      .footer {
+        text-align: center;
+        margin-top: 1.25rem;
+        font-size: 13px;
+        color: var(--gray-400);
+      }
+      .link {
+        color: var(--primary);
+        font-weight: 500;
+        text-decoration: none;
+      }
+      .link:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="header-inner">
+        <a class="logo" href="/"
+          ><div class="logo-icon">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"
+              />
+            </svg>
+          </div>
+          <span class="logo-text">Care<span>AI</span></span></a
+        >
+        <span class="badge">For Social Good</span>
+      </div>
+    </header>
+
+    <div class="wrapper">
+      <div class="card">
+        <div class="card-logo">
+          <div class="card-logo-icon">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"
+              />
+            </svg>
+          </div>
+          <h1>Care<span>AI</span></h1>
+        </div>
+        <h2>Reset your password</h2>
+        <p class="subtitle">Enter your email and we'll send you a reset link</p>
+        <div class="error" id="error"></div>
+        <div class="success" id="success"></div>
+        <div class="form-group">
+          <label>Email address</label>
+          <input
+            type="email"
+            id="email"
+            placeholder="you@email.com"
+            onkeydown="if (event.key === 'Enter') doReset();"
+          />
+        </div>
+        <button class="btn" id="btn" onclick="doReset()">
+          <div class="spinner" id="spinner"></div>
+          <span id="btn-text">Send reset link</span>
+        </button>
+        <div class="footer">
+          <a class="link" href="/static/login.html">Back to sign in</a>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const { createClient } = supabase;
+      const sb = createClient(
+        "https://wawqdgavicxbovubwkrl.supabase.co",
+        "sb_publishable_iUwmMypW776Ww7kGRbHgsA_M5pps90N",
+      );
+
+      async function doReset() {
+        const email = document.getElementById("email").value.trim();
+        const errEl = document.getElementById("error");
+        const sucEl = document.getElementById("success");
+        const spinner = document.getElementById("spinner");
+        const btnText = document.getElementById("btn-text");
+        const btn = document.getElementById("btn");
+
+        errEl.style.display = "none";
+        sucEl.style.display = "none";
+
+        if (!email) {
+          errEl.textContent = "Please enter your email address.";
+          errEl.style.display = "block";
+          return;
+        }
+
+        btn.disabled = true;
+        spinner.style.display = "block";
+        btnText.textContent = "Sending...";
+
+        const { error } = await sb.auth.resetPasswordForEmail(email, {
+          redirectTo: window.location.origin + "/static/login.html",
+        });
+
+        btn.disabled = false;
+        spinner.style.display = "none";
+        btnText.textContent = "Send reset link";
+
+        if (error) {
+          errEl.textContent = error.message;
+          errEl.style.display = "block";
+        } else {
+          sucEl.textContent =
+            "Reset link sent! Check your inbox and follow the instructions.";
+          sucEl.style.display = "block";
+        }
+      }
+    </script>
+  </body>
+</html>

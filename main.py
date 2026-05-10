@@ -98,4 +98,9 @@ async def triage(request: TriageRequest):
 async def health_check():
     return {"status": "ok", "service": "CareAI", "version": "1.0.0"}
 
-app.mount("/", StaticFiles(directory="static", html=True), name="static")
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+@app.get("/")
+async def root():
+    from fastapi.responses import FileResponse
+    return FileResponse("static/index.html")

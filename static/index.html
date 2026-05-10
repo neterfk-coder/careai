@@ -631,17 +631,20 @@
 
       // Al cargar: si no hay sesión activa → redirige al login
       sb.auth.getSession().then(({ data }) => {
-        if (!data.session) {
-          window.location.href = "/static/login.html";
-        } else {
+        if (data.session) {
           document.getElementById("user-email").textContent =
             data.session.user.email;
+        } else {
+          document.getElementById("user-email").textContent = "Guest";
+          document.getElementById("logout-btn").textContent = "Sign in";
+          document.getElementById("logout-btn").onclick = () =>
+            (window.location.href = "/static/login.html");
         }
       });
 
       // Escuchar cambios en tiempo real — si cierra sesión en otra pestaña, redirige
       sb.auth.onAuthStateChange((event, session) => {
-        if (event === "SIGNED_OUT" || !session) {
+        if (event === "SIGNED_OUT") {
           window.location.href = "/static/login.html";
         }
       });

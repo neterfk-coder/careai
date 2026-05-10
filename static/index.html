@@ -1296,6 +1296,10 @@
         window.location.href = "/static/login.html";
       }
 
+      // TRIAGE
+      let userLat = null;
+      let userLon = null;
+
       // CARI THE OWL - MASCOT
       const cariPhrases = [
         "Remember to drink at least 8 glasses of water a day! 💧",
@@ -1368,10 +1372,6 @@
           }, 6000);
         }
       }, 30000);
-
-      // TRIAGE
-      let userLat = null;
-      let userLon = null;
 
       function getLocation() {
         const status = document.getElementById("location-status");

@@ -1325,53 +1325,53 @@
       function cariGetPhrase() {
         if (cariUsed.length === cariPhrases.length) cariUsed = [];
         const remaining = cariPhrases.filter((_, i) => !cariUsed.includes(i));
-        const idx = cariPhrases.indexOf(
-          remaining[Math.floor(Math.random() * remaining.length)],
-        );
+        const phrase =
+          remaining[Math.floor(Math.random() * remaining.length)] ||
+          cariPhrases[0];
+        const idx = cariPhrases.indexOf(phrase);
         cariUsed.push(idx);
-        return cariPhrases[idx];
+        return phrase;
+      }
+
+      function cariHide() {
+        const bubble = document.getElementById("cari-bubble");
+        if (!bubble) return;
+        bubble.style.display = "none";
+        cariVisible = false;
+      }
+
+      function cariShow() {
+        const bubble = document.getElementById("cari-bubble");
+        const text = document.getElementById("cari-text");
+        if (!bubble || !text) return;
+        text.textContent = cariGetPhrase();
+        bubble.style.display = "block";
+        cariVisible = true;
+        setTimeout(cariHide, 6000);
       }
 
       function cariToggle() {
-        const bubble = document.getElementById("cari-bubble");
-        const text = document.getElementById("cari-text");
         if (cariVisible) {
-          bubble.style.display = "none";
-          cariVisible = false;
+          cariHide();
         } else {
-          text.textContent = cariGetPhrase();
-          bubble.style.display = "block";
-          cariVisible = true;
-          setTimeout(() => {
-            bubble.style.display = "none";
-            cariVisible = false;
-          }, 6000);
+          cariShow();
         }
       }
 
-      setTimeout(() => {
+      function initCari() {
         const bubble = document.getElementById("cari-bubble");
-        document.getElementById("cari-text").textContent = cariGetPhrase();
-        bubble.style.display = "block";
-        cariVisible = true;
-        setTimeout(() => {
-          bubble.style.display = "none";
-          cariVisible = false;
-        }, 6000);
-      }, 5000);
+        const text = document.getElementById("cari-text");
+        if (!bubble || !text) return;
+        bubble.style.display = "none";
 
-      setInterval(() => {
-        if (!cariVisible) {
-          const bubble = document.getElementById("cari-bubble");
-          document.getElementById("cari-text").textContent = cariGetPhrase();
-          bubble.style.display = "block";
-          cariVisible = true;
-          setTimeout(() => {
-            bubble.style.display = "none";
-            cariVisible = false;
-          }, 6000);
-        }
-      }, 30000);
+        setTimeout(cariShow, 5000);
+
+        setInterval(() => {
+          if (!cariVisible) cariShow();
+        }, 30000);
+      }
+
+      initCari();
 
       function getLocation() {
         const status = document.getElementById("location-status");

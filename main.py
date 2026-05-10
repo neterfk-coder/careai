@@ -20,7 +20,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-anthropic_client = Anthropic(api_key=os.getenv("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"))
+anthropic_client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
 SUPABASE_URL = os.getenv("https://wawqdgavicxbovubwkrl.supabase.co")
 SUPABASE_KEY = os.getenv("sb_publishable_iUwmMypW776Ww7kGRbHgsA_M5pps90N")
 
@@ -36,7 +36,7 @@ def haversine_km(lat1, lon1, lat2, lon2):
     a = math.sin(dlat/2)**2 + math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) * math.sin(dlon/2)**2
     return round(R * 2 * math.asin(math.sqrt(a)), 1)
 
-TRIAGE_PROMPT = """Eres CareAI, un asistente médico de triaje para comunidades rurales del Perú.
+TRIAGE_PROMPT = """Eres CareAI, un asistente médico de triaje para comunidades rurales del Perú y para todas las regiones del peru.
 Analiza los síntomas y responde ÚNICAMENTE con un objeto JSON válido (sin texto antes ni después):
 
 {{
@@ -58,7 +58,7 @@ async def triage(request: TriageRequest):
 
     try:
         message = anthropic_client.messages.create(
-            model="claude-3-haiku-20240307",
+            model="claude-3-5-haiku-20241022",
             max_tokens=1024,
             messages=[{"role": "user", "content": TRIAGE_PROMPT.format(symptoms=request.symptoms)}]
         )

@@ -37,14 +37,17 @@
         background: var(--gray-50);
         color: var(--gray-800);
         min-height: 100vh;
+        overflow-x: hidden;
       }
+
+      /* HEADER */
       header {
         background: white;
         border-bottom: 1px solid var(--gray-200);
         padding: 0 1.5rem;
         position: sticky;
         top: 0;
-        z-index: 10;
+        z-index: 100;
       }
       .header-inner {
         max-width: 720px;
@@ -94,14 +97,6 @@
         border-radius: 20px;
         font-weight: 500;
       }
-      .user-email {
-        font-size: 12px;
-        color: var(--gray-400);
-        max-width: 160px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
       .logout-btn {
         font-size: 13px;
         padding: 6px 14px;
@@ -116,6 +111,307 @@
         border-color: var(--alta);
         color: var(--alta);
       }
+
+      /* AVATAR BUTTON */
+      .avatar-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        cursor: pointer;
+        border: 2px solid var(--primary-light);
+        overflow: hidden;
+        background: var(--primary-light);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: border-color 0.2s;
+        flex-shrink: 0;
+      }
+      .avatar-btn:hover {
+        border-color: var(--primary);
+      }
+      .avatar-btn img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .avatar-btn svg {
+        width: 20px;
+        height: 20px;
+        fill: var(--primary);
+      }
+
+      /* PROFILE PANEL OVERLAY */
+      .panel-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.4);
+        z-index: 200;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s;
+      }
+      .panel-overlay.open {
+        opacity: 1;
+        pointer-events: all;
+      }
+
+      /* PROFILE SIDE PANEL */
+      .profile-panel {
+        position: fixed;
+        top: 0;
+        right: -400px;
+        width: 360px;
+        height: 100vh;
+        background: white;
+        z-index: 300;
+        transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        overflow-y: auto;
+        box-shadow: -8px 0 32px rgba(0, 0, 0, 0.12);
+      }
+      .profile-panel.open {
+        right: 0;
+      }
+
+      /* PANEL HEADER */
+      .panel-header {
+        background: linear-gradient(
+          135deg,
+          var(--primary-dark) 0%,
+          var(--primary) 100%
+        );
+        padding: 2rem 1.5rem 1.5rem;
+        position: relative;
+      }
+      .panel-close {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.15);
+        border: none;
+        color: white;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        transition: background 0.2s;
+      }
+      .panel-close:hover {
+        background: rgba(255, 255, 255, 0.25);
+      }
+
+      /* AVATAR SECTION */
+      .avatar-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+      }
+      .avatar-large {
+        width: 90px;
+        height: 90px;
+        border-radius: 50%;
+        border: 3px solid rgba(255, 255, 255, 0.4);
+        overflow: hidden;
+        background: rgba(255, 255, 255, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        position: relative;
+        transition: border-color 0.2s;
+      }
+      .avatar-large:hover {
+        border-color: white;
+      }
+      .avatar-large img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .avatar-large svg {
+        width: 44px;
+        height: 44px;
+        fill: rgba(255, 255, 255, 0.8);
+      }
+      .avatar-edit-hint {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(0, 0, 0, 0.4);
+        color: white;
+        font-size: 10px;
+        text-align: center;
+        padding: 4px 0;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+      .avatar-large:hover .avatar-edit-hint {
+        opacity: 1;
+      }
+      #avatar-input {
+        display: none;
+      }
+      .panel-name {
+        font-size: 18px;
+        font-weight: 700;
+        color: white;
+        text-align: center;
+      }
+      .panel-email {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.7);
+        text-align: center;
+      }
+      .panel-badge {
+        font-size: 11px;
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-weight: 500;
+      }
+
+      /* PANEL BODY */
+      .panel-body {
+        padding: 1.5rem;
+      }
+      .panel-section {
+        margin-bottom: 1.5rem;
+      }
+      .panel-section-title {
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--gray-400);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-bottom: 10px;
+      }
+
+      .form-field {
+        margin-bottom: 12px;
+      }
+      .form-field label {
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--gray-600);
+        display: block;
+        margin-bottom: 5px;
+      }
+      .form-field input {
+        width: 100%;
+        padding: 0.625rem 0.875rem;
+        border: 1.5px solid var(--gray-200);
+        border-radius: var(--radius-sm);
+        font-size: 14px;
+        font-family: inherit;
+        outline: none;
+        transition: border-color 0.2s;
+        color: var(--gray-800);
+      }
+      .form-field input:focus {
+        border-color: var(--primary);
+      }
+      .form-field input::placeholder {
+        color: var(--gray-400);
+      }
+
+      .save-btn {
+        width: 100%;
+        padding: 0.75rem;
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: var(--radius-sm);
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+      .save-btn:hover {
+        background: var(--primary-dark);
+      }
+      .save-btn:disabled {
+        background: var(--gray-400);
+        cursor: not-allowed;
+      }
+
+      .panel-divider {
+        height: 1px;
+        background: var(--gray-100);
+        margin: 1rem 0;
+      }
+
+      .stat-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-bottom: 1rem;
+      }
+      .stat-card {
+        background: var(--gray-50);
+        border-radius: var(--radius-sm);
+        padding: 0.75rem;
+        text-align: center;
+        border: 1px solid var(--gray-100);
+      }
+      .stat-val {
+        font-size: 20px;
+        font-weight: 700;
+        color: var(--primary);
+      }
+      .stat-lbl {
+        font-size: 11px;
+        color: var(--gray-400);
+        margin-top: 2px;
+      }
+
+      .guest-notice {
+        background: var(--media-bg);
+        border: 1px solid #fcd34d;
+        border-radius: var(--radius-sm);
+        padding: 0.875rem;
+        font-size: 13px;
+        color: #92400e;
+        margin-bottom: 1rem;
+      }
+      .guest-notice a {
+        color: var(--primary);
+        font-weight: 600;
+        text-decoration: none;
+      }
+
+      .panel-action-btn {
+        width: 100%;
+        padding: 0.75rem;
+        background: transparent;
+        color: var(--alta);
+        border: 1px solid #fca5a5;
+        border-radius: var(--radius-sm);
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+        margin-top: 8px;
+      }
+      .panel-action-btn:hover {
+        background: var(--alta-bg);
+      }
+
+      .success-msg {
+        font-size: 12px;
+        color: var(--baja);
+        text-align: center;
+        margin-top: 8px;
+        display: none;
+      }
+
+      /* MAIN */
       main {
         max-width: 720px;
         margin: 0 auto;
@@ -486,6 +782,116 @@
     </style>
   </head>
   <body>
+    <!-- OVERLAY -->
+    <div class="panel-overlay" id="overlay" onclick="closePanel()"></div>
+
+    <!-- PROFILE SIDE PANEL -->
+    <div class="profile-panel" id="profile-panel">
+      <div class="panel-header">
+        <button class="panel-close" onclick="closePanel()">✕</button>
+        <div class="avatar-section">
+          <div
+            class="avatar-large"
+            onclick="document.getElementById('avatar-input').click()"
+          >
+            <img id="avatar-preview" src="" alt="" style="display: none" />
+            <svg id="avatar-placeholder" viewBox="0 0 24 24">
+              <path
+                d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"
+              />
+            </svg>
+            <div class="avatar-edit-hint">Change photo</div>
+          </div>
+          <input
+            type="file"
+            id="avatar-input"
+            accept="image/*"
+            onchange="handleAvatar(event)"
+          />
+          <div class="panel-name" id="panel-name">My Profile</div>
+          <div class="panel-email" id="panel-email"></div>
+          <span class="panel-badge" id="panel-badge">Guest</span>
+        </div>
+      </div>
+
+      <div class="panel-body">
+        <!-- GUEST NOTICE -->
+        <div class="guest-notice" id="guest-notice" style="display: none">
+          ⚡ You're in guest mode.
+          <a href="/static/registro.html">Create an account</a> to save your
+          profile permanently.
+        </div>
+
+        <!-- STATS -->
+        <div class="panel-section">
+          <div class="panel-section-title">Your Activity</div>
+          <div class="stat-grid">
+            <div class="stat-card">
+              <div class="stat-val" id="stat-consultations">0</div>
+              <div class="stat-lbl">Consultations</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-val" id="stat-joined">—</div>
+              <div class="stat-lbl">Member since</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-divider"></div>
+
+        <!-- EDIT PROFILE -->
+        <div class="panel-section">
+          <div class="panel-section-title">Edit Profile</div>
+          <div class="form-field">
+            <label>Display name</label>
+            <input
+              type="text"
+              id="input-name"
+              placeholder="Your name"
+              maxlength="40"
+            />
+          </div>
+          <div class="form-field">
+            <label>City / Location</label>
+            <input
+              type="text"
+              id="input-city"
+              placeholder="e.g. Lima, Peru"
+              maxlength="50"
+            />
+          </div>
+          <div class="form-field">
+            <label>Age</label>
+            <input
+              type="number"
+              id="input-age"
+              placeholder="Your age"
+              min="1"
+              max="120"
+            />
+          </div>
+          <div class="form-field">
+            <label>Blood type</label>
+            <input
+              type="text"
+              id="input-blood"
+              placeholder="e.g. O+"
+              maxlength="5"
+            />
+          </div>
+          <button class="save-btn" onclick="saveProfile()">Save changes</button>
+          <div class="success-msg" id="save-success">
+            ✓ Profile saved successfully
+          </div>
+        </div>
+
+        <div class="panel-divider"></div>
+
+        <!-- SIGN OUT -->
+        <button class="panel-action-btn" onclick="logout()">Sign out</button>
+      </div>
+    </div>
+
     <header>
       <div class="header-inner">
         <div class="logo">
@@ -500,8 +906,17 @@
         </div>
         <div class="header-right">
           <span class="badge-header">For Social Good</span>
-          <span class="user-email" id="user-email"></span>
-          <button class="logout-btn" onclick="logout()">Sign out</button>
+          <button
+            class="avatar-btn"
+            id="avatar-btn-header"
+            onclick="openPanel()"
+          >
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"
+              />
+            </svg>
+          </button>
         </div>
       </div>
     </header>
@@ -622,38 +1037,142 @@
     </footer>
 
     <script>
-      // ── SUPABASE AUTH ──
       const { createClient } = supabase;
-      const sb = createClient(
-        "https://wawqdgavicxbovubwkrl.supabase.co",
-        "sb_publishable_iUwmMypW776Ww7kGRbHgsA_M5pps90N",
-      );
+      const sb = createClient("SUPABASE_URL_AQUI", "SUPABASE_ANON_KEY_AQUI");
 
-      // Al cargar: si no hay sesión activa → redirige al login
+      let isGuest = false;
+      let consultations = 0;
+
+      // AUTH CHECK
       sb.auth.getSession().then(({ data }) => {
         if (data.session) {
-          document.getElementById("user-email").textContent =
-            data.session.user.email;
+          loadProfile(data.session.user);
         } else {
-          document.getElementById("user-email").textContent = "Guest";
-          document.getElementById("logout-btn").textContent = "Sign in";
-          document.getElementById("logout-btn").onclick = () =>
-            (window.location.href = "/static/login.html");
+          isGuest = true;
+          loadGuestProfile();
         }
       });
 
-      // Escuchar cambios en tiempo real — si cierra sesión en otra pestaña, redirige
       sb.auth.onAuthStateChange((event, session) => {
-        if (event === "SIGNED_OUT") {
-          window.location.href = "/static/login.html";
-        }
+        if (event === "SIGNED_OUT") window.location.href = "/static/login.html";
       });
+
+      function loadProfile(user) {
+        const saved = JSON.parse(
+          localStorage.getItem("careai_profile") || "{}",
+        );
+        const name = saved.name || user.email.split("@")[0];
+        const avatar = saved.avatar || null;
+        consultations = parseInt(
+          localStorage.getItem("careai_consultations") || "0",
+        );
+
+        document.getElementById("panel-name").textContent = name;
+        document.getElementById("panel-email").textContent = user.email;
+        document.getElementById("panel-badge").textContent = "Member";
+        document.getElementById("stat-consultations").textContent =
+          consultations;
+        document.getElementById("stat-joined").textContent = new Date(
+          user.created_at,
+        ).getFullYear();
+        document.getElementById("input-name").value = saved.name || "";
+        document.getElementById("input-city").value = saved.city || "";
+        document.getElementById("input-age").value = saved.age || "";
+        document.getElementById("input-blood").value = saved.blood || "";
+
+        if (avatar) {
+          document.getElementById("avatar-preview").src = avatar;
+          document.getElementById("avatar-preview").style.display = "block";
+          document.getElementById("avatar-placeholder").style.display = "none";
+          const headerBtn = document.getElementById("avatar-btn-header");
+          headerBtn.innerHTML = `<img src="${avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/>`;
+        }
+      }
+
+      function loadGuestProfile() {
+        const saved = JSON.parse(
+          localStorage.getItem("careai_guest_profile") || "{}",
+        );
+        consultations = parseInt(
+          localStorage.getItem("careai_consultations") || "0",
+        );
+
+        document.getElementById("panel-name").textContent =
+          saved.name || "Guest User";
+        document.getElementById("panel-email").textContent = "Guest mode";
+        document.getElementById("panel-badge").textContent = "Guest";
+        document.getElementById("guest-notice").style.display = "block";
+        document.getElementById("stat-consultations").textContent =
+          consultations;
+        document.getElementById("stat-joined").textContent = "N/A";
+        document.getElementById("input-name").value = saved.name || "";
+        document.getElementById("input-city").value = saved.city || "";
+        document.getElementById("input-age").value = saved.age || "";
+        document.getElementById("input-blood").value = saved.blood || "";
+
+        const avatar = saved.avatar || null;
+        if (avatar) {
+          document.getElementById("avatar-preview").src = avatar;
+          document.getElementById("avatar-preview").style.display = "block";
+          document.getElementById("avatar-placeholder").style.display = "none";
+          const headerBtn = document.getElementById("avatar-btn-header");
+          headerBtn.innerHTML = `<img src="${avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/>`;
+        }
+      }
+
+      function saveProfile() {
+        const profile = {
+          name: document.getElementById("input-name").value.trim(),
+          city: document.getElementById("input-city").value.trim(),
+          age: document.getElementById("input-age").value,
+          blood: document.getElementById("input-blood").value.trim(),
+          avatar: document.getElementById("avatar-preview").src || null,
+        };
+
+        const key = isGuest ? "careai_guest_profile" : "careai_profile";
+        localStorage.setItem(key, JSON.stringify(profile));
+
+        if (profile.name)
+          document.getElementById("panel-name").textContent = profile.name;
+
+        const msg = document.getElementById("save-success");
+        msg.style.display = "block";
+        setTimeout(() => (msg.style.display = "none"), 3000);
+      }
+
+      function handleAvatar(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const src = e.target.result;
+          document.getElementById("avatar-preview").src = src;
+          document.getElementById("avatar-preview").style.display = "block";
+          document.getElementById("avatar-placeholder").style.display = "none";
+          const headerBtn = document.getElementById("avatar-btn-header");
+          headerBtn.innerHTML = `<img src="${src}" style="width:100%;height:100%;object-fit:cover;border-radius:50%"/>`;
+        };
+        reader.readAsDataURL(file);
+      }
+
+      function openPanel() {
+        document.getElementById("profile-panel").classList.add("open");
+        document.getElementById("overlay").classList.add("open");
+        document.body.style.overflow = "hidden";
+      }
+
+      function closePanel() {
+        document.getElementById("profile-panel").classList.remove("open");
+        document.getElementById("overlay").classList.remove("open");
+        document.body.style.overflow = "";
+      }
 
       async function logout() {
         await sb.auth.signOut();
+        window.location.href = "/static/login.html";
       }
 
-      // ── TRIAGE ──
+      // TRIAGE
       let userLat = null;
       let userLon = null;
 
@@ -703,6 +1222,13 @@
             const err = await res.json();
             throw new Error(err.detail || "Server error");
           }
+
+          // Track consultations
+          consultations++;
+          localStorage.setItem("careai_consultations", consultations);
+          document.getElementById("stat-consultations").textContent =
+            consultations;
+
           renderResults(await res.json());
         } catch (e) {
           alert("Error: " + e.message);
